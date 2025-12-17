@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, Image, ScrollView, StyleSheet, Alert } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, Image, ScrollView, StyleSheet, Alert, TouchableOpacity } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { useTheme, useAppDispatch, useAppSelector } from '../hooks/reduxHooks';
 import { addToCart } from '../redux/slices/cartSlice';
@@ -13,8 +13,22 @@ const ProductDetailScreen = () => {
   const { colors } = useTheme();
   const dispatch = useAppDispatch();
   const isAuthenticated = useAppSelector(state => state.auth.isAuthenticated);
+  const cartItems = useAppSelector(state => state.cart.items);
+  const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
   const [showLoginModal, setShowLoginModal] = useState(false);
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <TouchableOpacity onPress={() => navigation.navigate('Cart')}>
+          <Text style={[styles.cartButton, { color: colors.primary }]}>
+            Cart ({cartCount})
+          </Text>
+        </TouchableOpacity>
+      ),
+    });
+  }, [navigation, cartCount, colors]);
 
   const handleAddToCart = () => {
     console.log('Is Authenticated:', isAuthenticated);
@@ -116,6 +130,10 @@ const styles = StyleSheet.create({
     right: 0,
     padding: 16,
     borderTopWidth: 1,
+  },
+  cartButton: {
+    fontWeight: 'bold',
+    fontSize: 14,
   },
 });
 
