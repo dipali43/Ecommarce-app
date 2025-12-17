@@ -1,9 +1,15 @@
+/**
+ * Loader - Full screen loading spinner
+ * Used when fetching data
+ */
+
 import React from 'react';
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import { useTheme } from '../hooks/reduxHooks';
 
 const Loader = () => {
   const { colors } = useTheme();
+  
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <ActivityIndicator size="large" color={colors.primary} />

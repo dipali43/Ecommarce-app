@@ -1,3 +1,8 @@
+/**
+ * ProductCard - Displays a product in the grid
+ * Shows: Image, Title (truncated), Price
+ */
+
 import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { useTheme } from '../hooks/reduxHooks';
@@ -5,22 +10,29 @@ import { useTheme } from '../hooks/reduxHooks';
 const ProductCard = ({ product, onPress }) => {
   const { colors } = useTheme();
 
-  // Shorten title for card display
-  const title = product.title.length > 40 ? product.title.substring(0, 40) + '...' : product.title;
+  // Shorten title if too long
+  const title = product.title.length > 40 
+    ? product.title.substring(0, 40) + '...' 
+    : product.title;
 
   return (
     <TouchableOpacity 
       style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]} 
       onPress={onPress}
     >
+      {/* Product image */}
       <Image 
         source={{ uri: product.image }} 
         style={styles.image} 
         resizeMode="contain" 
       />
+      
+      {/* Product info */}
       <View style={styles.content}>
         <Text style={[styles.title, { color: colors.text }]}>{title}</Text>
-        <Text style={[styles.price, { color: colors.primary }]}>${product.price.toFixed(2)}</Text>
+        <Text style={[styles.price, { color: colors.primary }]}>
+          ${product.price.toFixed(2)}
+        </Text>
       </View>
     </TouchableOpacity>
   );
@@ -32,7 +44,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginBottom: 16,
     overflow: 'hidden',
-    width: '48%', // Approx 2 columns
+    width: '48%', // 2 columns layout
     marginHorizontal: '1%',
     elevation: 2,
     shadowColor: '#000',
@@ -43,7 +55,7 @@ const styles = StyleSheet.create({
   image: {
     width: '100%',
     height: 150,
-    backgroundColor: '#fff', // Images often have white backgrounds
+    backgroundColor: '#fff',
     marginVertical: 8,
   },
   content: {
@@ -53,7 +65,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '500',
     marginBottom: 8,
-    height: 40, // Fixed height for 2 lines approx
+    height: 40, // Fixed for 2 lines
     lineHeight: 20,
   },
   price: {

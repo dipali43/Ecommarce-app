@@ -1,3 +1,8 @@
+/**
+ * ProductDetailScreen - Shows full details of a single product
+ * Features: Product info, Add to Cart, Login modal if not authenticated
+ */
+
 import React, { useState, useEffect } from 'react';
 import { View, Text, Image, ScrollView, StyleSheet, Alert, TouchableOpacity } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
@@ -7,17 +12,26 @@ import CustomButton from '../components/CustomButton';
 import LoginModal from '../components/LoginModal';
 
 const ProductDetailScreen = () => {
+  // Get product from navigation params
   const route = useRoute();
   const navigation = useNavigation();
   const { product } = route.params;
+  
+  // Theme and Redux hooks
   const { colors } = useTheme();
   const dispatch = useAppDispatch();
+  
+  // Check if user is logged in
   const isAuthenticated = useAppSelector(state => state.auth.isAuthenticated);
+  
+  // Get cart count for header badge
   const cartItems = useAppSelector(state => state.cart.items);
   const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
+  // State for login modal visibility
   const [showLoginModal, setShowLoginModal] = useState(false);
 
+  // Set cart button in header
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -30,8 +44,8 @@ const ProductDetailScreen = () => {
     });
   }, [navigation, cartCount, colors]);
 
+  // Handle add to cart - shows login modal if not authenticated
   const handleAddToCart = () => {
-    console.log('Is Authenticated:', isAuthenticated);
     if (!isAuthenticated) {
       setShowLoginModal(true);
     } else {
@@ -40,34 +54,48 @@ const ProductDetailScreen = () => {
     }
   };
 
+  // Called after successful login
   const handleLoginSuccess = () => {
-    // Retry logic could go here if needed, or just let user click again
     Alert.alert('Logged In', 'You can now add items to cart.');
   };
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
+      {/* Product details in scrollable area */}
       <ScrollView contentContainerStyle={styles.scrollContent}>
+        {/* Product image */}
         <Image 
           source={{ uri: product.image }} 
           style={styles.image} 
           resizeMode="contain" 
         />
+        
+        {/* Product info */}
         <View style={styles.details}>
           <Text style={[styles.title, { color: colors.text }]}>{product.title}</Text>
+          
+          {/* Price and rating row */}
           <View style={styles.headerRow}>
-             <Text style={[styles.price, { color: colors.primary }]}>${product.price}</Text>
-             <Text style={[styles.rating, { color: colors.text }]}>★ {product.rating.rate} ({product.rating.count})</Text>
+            <Text style={[styles.price, { color: colors.primary }]}>${product.price}</Text>
+            <Text style={[styles.rating, { color: colors.text }]}>
+              ★ {product.rating.rate} ({product.rating.count})
+            </Text>
           </View>
+          
+          {/* Description */}
           <Text style={[styles.description, { color: colors.text }]}>{product.description}</Text>
+          
+          {/* Category tag */}
           <Text style={[styles.category, { color: colors.secondary }]}>#{product.category}</Text>
         </View>
       </ScrollView>
 
+      {/* Fixed footer with Add to Cart button */}
       <View style={[styles.footer, { backgroundColor: colors.card, borderTopColor: colors.border }]}>
         <CustomButton title="Add to Cart" onPress={handleAddToCart} />
       </View>
 
+      {/* Login modal - shows when user tries to add to cart without logging in */}
       <LoginModal
         visible={showLoginModal}
         onClose={() => setShowLoginModal(false)}
@@ -82,7 +110,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingBottom: 100,
+    paddingBottom: 100, // Space for fixed footer
   },
   image: {
     width: '100%',

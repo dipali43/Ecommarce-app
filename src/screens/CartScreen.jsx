@@ -1,3 +1,8 @@
+/**
+ * CartScreen - Shows items in the cart
+ * Features: Remove items, Total price, Place order
+ */
+
 import React from 'react';
 import { View, FlatList, Text, StyleSheet, Image, Alert, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -10,11 +15,15 @@ const CartScreen = () => {
   const navigation = useNavigation();
   const { colors } = useTheme();
   const dispatch = useAppDispatch();
+  
+  // Get cart items and total from Redux
   const { items, totalPrice } = useAppSelector(state => state.cart);
 
+  // Create order and save to history
   const handlePlaceOrder = async () => {
     if (items.length === 0) return;
 
+    // Create order object
     const newOrder = {
       id: Date.now().toString(),
       date: new Date().toISOString(),
@@ -23,6 +32,7 @@ const CartScreen = () => {
     };
 
     try {
+      // Save order and clear cart
       await dispatch(placeOrder(newOrder)).unwrap();
       dispatch(clearCart());
       Alert.alert('Success', 'Order Placed Successfully!', [
@@ -33,9 +43,13 @@ const CartScreen = () => {
     }
   };
 
+  // Render each cart item
   const renderItem = ({ item }) => (
     <View style={[styles.itemContainer, { backgroundColor: colors.card }]}>
+      {/* Item image */}
       <Image source={{ uri: item.image }} style={styles.image} resizeMode="contain" />
+      
+      {/* Item details */}
       <View style={styles.itemDetails}>
         <Text style={[styles.itemTitle, { color: colors.text }]} numberOfLines={1}>
           {item.title}
@@ -44,14 +58,17 @@ const CartScreen = () => {
           ${item.price} x {item.quantity}
         </Text>
       </View>
+      
+      {/* Remove button */}
       <TouchableOpacity onPress={() => dispatch(removeFromCart(item.id))}>
-         <Text style={{ color: colors.error, fontWeight: 'bold' }}>Remove</Text>
+        <Text style={[styles.removeButton, { color: colors.error }]}>Remove</Text>
       </TouchableOpacity>
     </View>
   );
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
+      {/* Cart items list */}
       <FlatList
         data={items}
         renderItem={renderItem}
@@ -63,6 +80,8 @@ const CartScreen = () => {
           </View>
         }
       />
+      
+      {/* Footer with total and place order button */}
       {items.length > 0 && (
         <View style={[styles.footer, { backgroundColor: colors.card, borderTopColor: colors.border }]}>
           <View style={styles.totalRow}>
@@ -107,6 +126,9 @@ const styles = StyleSheet.create({
   itemPrice: {
     fontSize: 14,
     marginTop: 4,
+  },
+  removeButton: {
+    fontWeight: 'bold',
   },
   emptyContainer: {
     flex: 1,

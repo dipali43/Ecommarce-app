@@ -1,3 +1,8 @@
+/**
+ * CustomInput - Reusable text input with label and error
+ * Auto-styles based on theme
+ */
+
 import React from 'react';
 import { TextInput, View, Text, StyleSheet } from 'react-native';
 import { useTheme } from '../hooks/reduxHooks';
@@ -7,7 +12,10 @@ const CustomInput = ({ label, error, style, ...props }) => {
 
   return (
     <View style={styles.container}>
+      {/* Label above input */}
       {label && <Text style={[styles.label, { color: colors.text }]}>{label}</Text>}
+      
+      {/* Text input */}
       <TextInput
         style={[
           styles.input,
@@ -21,6 +29,8 @@ const CustomInput = ({ label, error, style, ...props }) => {
         placeholderTextColor="#888"
         {...props}
       />
+      
+      {/* Error message */}
       {error && <Text style={[styles.error, { color: colors.error }]}>{error}</Text>}
     </View>
   );

@@ -1,3 +1,8 @@
+/**
+ * LoginModal - Popup for user authentication
+ * Mock login with test credentials
+ */
+
 import React, { useState } from 'react';
 import { Modal, View, Text, StyleSheet, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { useTheme, useAppDispatch } from '../hooks/reduxHooks';
@@ -8,25 +13,30 @@ import CustomInput from './CustomInput';
 const LoginModal = ({ visible, onClose, onSuccess }) => {
   const { colors } = useTheme();
   const dispatch = useAppDispatch();
+  
+  // Form state
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Mock Credentials
+  // Test credentials for demo
   const TEST_EMAIL_1 = 'test@zignuts.com';
   const TEST_EMAIL_2 = 'practical@zignuts.com';
   const TEST_PASS = '123456';
 
+  // Handle login button press
   const handleLogin = async () => {
     Keyboard.dismiss();
     setError('');
     
+    // Validate inputs
     if (!email || !password) {
       setError('Please fill in all fields');
       return;
     }
 
+    // Check credentials
     if ((email === TEST_EMAIL_1 || email === TEST_EMAIL_2) && password === TEST_PASS) {
       setLoading(true);
       try {
@@ -34,7 +44,7 @@ const LoginModal = ({ visible, onClose, onSuccess }) => {
         setLoading(false);
         onSuccess();
         onClose();
-        // Reset fields
+        // Clear form
         setEmail('');
         setPassword('');
       } catch (err) {
@@ -53,14 +63,17 @@ const LoginModal = ({ visible, onClose, onSuccess }) => {
       animationType="slide"
       onRequestClose={onClose}
     >
+      {/* Dismiss keyboard on tap outside */}
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.overlay}>
           <View style={[styles.modalContainer, { backgroundColor: colors.background }]}>
+            {/* Title */}
             <Text style={[styles.title, { color: colors.text }]}>Login Required</Text>
             <Text style={[styles.subtitle, { color: colors.text }]}>
               Please login to add items to your cart.
             </Text>
 
+            {/* Email input */}
             <CustomInput
               label="Email"
               placeholder="e.g. test@zignuts.com"
@@ -70,6 +83,7 @@ const LoginModal = ({ visible, onClose, onSuccess }) => {
               keyboardType="email-address"
             />
 
+            {/* Password input */}
             <CustomInput
               label="Password"
               placeholder="******"
@@ -79,18 +93,19 @@ const LoginModal = ({ visible, onClose, onSuccess }) => {
               error={error}
             />
 
+            {/* Action buttons */}
             <View style={styles.buttonContainer}>
               <CustomButton
                 title="Cancel"
                 type="outline"
                 onPress={onClose}
-                style={{ flex: 1, marginRight: 8 }}
+                style={styles.cancelButton}
               />
               <CustomButton
                 title="Login"
                 onPress={handleLogin}
                 loading={loading}
-                style={{ flex: 1, marginLeft: 8 }}
+                style={styles.loginButton}
               />
             </View>
           </View>
@@ -131,6 +146,14 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: 'row',
     marginTop: 16,
+  },
+  cancelButton: {
+    flex: 1,
+    marginRight: 8,
+  },
+  loginButton: {
+    flex: 1,
+    marginLeft: 8,
   },
 });
 

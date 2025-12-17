@@ -1,3 +1,8 @@
+/**
+ * OrderHistoryScreen - Shows list of past orders
+ * Data is loaded from AsyncStorage via Redux
+ */
+
 import React, { useEffect } from 'react';
 import { View, FlatList, Text, StyleSheet } from 'react-native';
 import { useTheme, useAppSelector, useAppDispatch } from '../hooks/reduxHooks';
@@ -7,15 +12,19 @@ import Loader from '../components/Loader';
 const OrderHistoryScreen = () => {
   const { colors } = useTheme();
   const dispatch = useAppDispatch();
+  
+  // Get order history from Redux
   const { history, loading } = useAppSelector(state => state.orders);
   
-  // Reload orders when screen is visited just to be safe
+  // Load orders when screen opens
   useEffect(() => {
     dispatch(loadOrders());
   }, [dispatch]);
 
+  // Render each order card
   const renderItem = ({ item }) => (
     <View style={[styles.orderCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+      {/* Order date and total */}
       <View style={styles.header}>
         <Text style={[styles.date, { color: colors.text }]}>
           {new Date(item.date).toLocaleDateString()} {new Date(item.date).toLocaleTimeString()}
@@ -24,16 +33,20 @@ const OrderHistoryScreen = () => {
           ${item.totalPrice.toFixed(2)}
         </Text>
       </View>
+      
+      {/* Number of items */}
       <Text style={[styles.itemCount, { color: colors.text }]}>
         {item.items.length} Items
       </Text>
     </View>
   );
 
+  // Show loader while fetching
   if (loading) return <Loader />;
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
+      {/* Orders list */}
       <FlatList
         data={history}
         renderItem={renderItem}

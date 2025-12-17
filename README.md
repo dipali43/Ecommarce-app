@@ -50,8 +50,3 @@ src/
    ```bash
    npm run ios
    ```
-# Ecommarce-app
-# Ecommarce-app
-# Ecommarce-app
-# Ecommarce-app
-# Ecommarce-app
